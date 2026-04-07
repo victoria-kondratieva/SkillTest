@@ -36,7 +36,6 @@ public sealed class Test : Entity<TestId>, IAggregateRoot
         string description,
         int? duration,
         TestStatus status,
-        int maxScore,
         DifficultyLevel difficultyLevel,
         CategoryId categoryId,
         UserId createdBy)
@@ -46,7 +45,6 @@ public sealed class Test : Entity<TestId>, IAggregateRoot
         Description = description;
         Duration = duration;
         Status = status;
-        MaxScore = maxScore;
         DifficultyLevel = difficultyLevel;
         CategoryId = categoryId;
         CreatedBy = createdBy;
@@ -58,7 +56,6 @@ public sealed class Test : Entity<TestId>, IAggregateRoot
         string description,
         int? duration,
         TestStatus status,
-        int maxScore,
         DifficultyLevel difficultyLevel,
         CategoryId categoryId)
     {
@@ -66,7 +63,6 @@ public sealed class Test : Entity<TestId>, IAggregateRoot
         Description = description;
         Duration = duration;
         Status = status;
-        MaxScore = maxScore;
         DifficultyLevel = difficultyLevel;
         CategoryId = categoryId;
         UpdatedAt = DateTime.UtcNow;
@@ -81,5 +77,10 @@ public sealed class Test : Entity<TestId>, IAggregateRoot
     {
         if (!_tags.Contains(tag))
             _tags.Add(tag);
+    }
+
+    public void RecalculateMaxScore()
+    {
+        MaxScore = _questions.Sum(q => q.Points);
     }
 }

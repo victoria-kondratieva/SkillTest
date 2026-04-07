@@ -1,6 +1,7 @@
 ﻿using SkillTest.Application.Common.Exceptions;
 using SkillTest.Application.Common.Interfaces;
 using SkillTest.Application.Common.Models;
+using SkillTest.Application.Users.Enums;
 using SkillTest.Domain.Users.Entities;
 using SkillTest.Domain.Users.ValueObjects.Identifiers;
 using SkillTest.Domain.Users.ValueObjects.User;
@@ -28,9 +29,10 @@ public sealed class AuthService : IAuthService
         string password,
         string username,
         string firstName,
-        string lastName)
+        string lastName,
+        CancellationToken cancellationToken = default)
     {
-        var identityUserId = await _identityAuthService.CreateIdentityUserAsync(email, password);
+        var identityUserId = await _identityAuthService.CreateIdentityUserAsync(email, password, cancellationToken);
 
         var userId = UserId.From(identityUserId);
 
@@ -44,11 +46,11 @@ public sealed class AuthService : IAuthService
             new UserSettings()
         );
 
-        await _userRepository.AddAsync(domainUser);
+        await _userRepository.AddAsync(domainUser, cancellationToken);
 
-        await _identityAuthService.AssignRoleAsync(identityUserId, "User");
+        await _identityAuthService.AssignRoleAsync(identityUserId, UserRole.User, cancellationToken);
 
-        var roles = await _identityAuthService.GetRolesAsync(identityUserId);
+        var roles = await _identityAuthService.GetRolesAsync(identityUserId, cancellationToken);
 
         var token = _jwtTokenService.GenerateToken(identityUserId, email, roles);
 
@@ -60,14 +62,17 @@ public sealed class AuthService : IAuthService
         };
     }
 
-    public async Task<AuthResult> LoginAsync(string email, string password)
+    public async Task<AuthResult> LoginAsync(
+        string email,
+        string password,
+        CancellationToken cancellationToken = default)
     {
-        var isValid = await _identityAuthService.ValidateCredentialsAsync(email, password);
+        var isValid = await _identityAuthService.ValidateCredentialsAsync(email, password, cancellationToken);
         if (!isValid)
             throw new InvalidCredentialsException();
 
-        var identityUserId = await _identityAuthService.GetUserIdByEmailAsync(email);
-        var roles = await _identityAuthService.GetRolesAsync(identityUserId);
+        var identityUserId = await _identityAuthService.GetUserIdByEmailAsync(email, cancellationToken);
+        var roles = await _identityAuthService.GetRolesAsync(identityUserId, cancellationToken);
 
         var token = _jwtTokenService.GenerateToken(identityUserId, email, roles);
 

@@ -5,10 +5,11 @@ namespace SkillTest.Application.Common.Interfaces;
 
 public interface IUserRepository
 {
-    Task<User?> GetByIdAsync(UserId id);
-    Task<User?> GetByEmailAsync(string email);
-    Task<IReadOnlyList<User>> GetAllAsync();
-    Task AddAsync(User user);
-    Task UpdateAsync(User user);
-    Task DeleteAsync(User user);
+    Task<User?> GetByIdAsync(UserId id, CancellationToken cancellationToken = default);
+    Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<User>> GetAllAsync(CancellationToken cancellationToken = default);
+
+    Task AddAsync(User user, CancellationToken cancellationToken = default);
+    Task UpdateAsync(User user, CancellationToken cancellationToken = default);
+    Task DeleteAsync(User user, CancellationToken cancellationToken = default);
 }

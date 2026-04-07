@@ -32,7 +32,7 @@ public sealed class TestAttemptConfiguration : IEntityTypeConfiguration<TestAtte
         builder.Property(a => a.TestId)
             .HasConversion(
                 id => id.Value,
-                value => TestId.Create(value))
+                value => TestId.From(value))
             .IsRequired();
 
         builder.Property(a => a.StartedAt)

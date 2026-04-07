@@ -15,18 +15,28 @@ public sealed class IdentityUserService : IIdentityUserService
         _userManager = userManager;
     }
 
-    public async Task DeleteIdentityUserAsync(Guid id)
+    public async Task DeleteIdentityUserAsync(
+        Guid id,
+        CancellationToken cancellationToken = default)
     {
         var user = await _userManager.FindByIdAsync(id.ToString());
+
+        cancellationToken.ThrowIfCancellationRequested();
+
         if (user != null)
             await _userManager.DeleteAsync(user);
     }
 
-    public async Task<bool> AssignRoleAsync(Guid id, UserRole role)
+    public async Task<bool> AssignRoleAsync(
+        Guid id, 
+        UserRole role,
+        CancellationToken cancellationToken = default)
     {
         var user = await _userManager.FindByIdAsync(id.ToString());
         if (user == null)
             return false;
+
+        cancellationToken.ThrowIfCancellationRequested();
 
         var roleName = RoleNames.ToString(role);
 

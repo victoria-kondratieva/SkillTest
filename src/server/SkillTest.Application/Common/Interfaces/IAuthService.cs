@@ -9,9 +9,11 @@ public interface IAuthService
         string password,
         string username,
         string firstName,
-        string lastName);
+        string lastName,
+        CancellationToken cancellationToken = default);
 
     Task<AuthResult> LoginAsync(
         string email,
-        string password);
+        string password,
+        CancellationToken cancellationToken = default);
 }

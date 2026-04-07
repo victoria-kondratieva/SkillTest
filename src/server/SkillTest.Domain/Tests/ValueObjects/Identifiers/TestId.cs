@@ -16,7 +16,7 @@ public sealed class TestId : ValueObject
     public static TestId CreateUnique()
         => new TestId(Guid.NewGuid());
 
-    public static TestId Create(Guid value)
+    public static TestId From(Guid value)
         => new TestId(value);
 
     protected override IEnumerable<object?> GetEqualityComponents()

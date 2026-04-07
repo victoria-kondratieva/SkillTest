@@ -6,7 +6,7 @@ using SkillTest.Domain.Users.ValueObjects.Identifiers;
 
 namespace SkillTest.Infrastructure.Persistence.Repositories;
 
-public sealed class UserRepository : IUserRepository
+internal sealed class UserRepository : IUserRepository
 {
     private readonly ApplicationDbContext _dbContext;
 
@@ -15,42 +15,52 @@ public sealed class UserRepository : IUserRepository
         _dbContext = dbContext;
     }
 
-    public async Task<User?> GetByIdAsync(UserId id)
+    public Task<User?> GetByIdAsync(
+        UserId id,
+        CancellationToken cancellationToken = default)
+    {
+        return _dbContext.Users
+            .Include(u => u.PointTransactions)
+            .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
+    }
+
+    public Task<User?> GetByEmailAsync(
+        string email,
+        CancellationToken cancellationToken = default)
+    {
+        return _dbContext.Users
+            .Include(u => u.PointTransactions)
+            .FirstOrDefaultAsync(u => u.Email.Value == email, cancellationToken);
+    }
+
+    public async Task<IReadOnlyList<User>> GetAllAsync(
+        CancellationToken cancellationToken = default)
     {
         return await _dbContext.Users
             .Include(u => u.PointTransactions)
-            .FirstOrDefaultAsync(u => u.Id == id);
+            .ToListAsync(cancellationToken);
     }
 
-    public async Task<User?> GetByEmailAsync(string email)
+    public async Task AddAsync(
+        User user,
+        CancellationToken cancellationToken = default)
     {
-        return await _dbContext.Users
-            .Include(u => u.PointTransactions)
-            .FirstOrDefaultAsync(u => u.Email.Value == email);
+        await _dbContext.Users.AddAsync(user, cancellationToken);
     }
 
-    public async Task<IReadOnlyList<User>> GetAllAsync()
-    {
-        return await _dbContext.Users
-            .Include(u => u.PointTransactions)
-            .ToListAsync();
-    }
-
-    public async Task AddAsync(User user)
-    {
-        await _dbContext.Users.AddAsync(user);
-        await _dbContext.SaveChangesAsync();
-    }
-
-    public async Task UpdateAsync(User user)
+    public Task UpdateAsync(
+        User user,
+        CancellationToken cancellationToken = default)
     {
         _dbContext.Users.Update(user);
-        await _dbContext.SaveChangesAsync();
+        return Task.CompletedTask;
     }
 
-    public async Task DeleteAsync(User user)
+    public Task DeleteAsync(
+        User user,
+        CancellationToken cancellationToken = default)
     {
         _dbContext.Users.Remove(user);
-        await _dbContext.SaveChangesAsync();
+        return Task.CompletedTask;
     }
 }

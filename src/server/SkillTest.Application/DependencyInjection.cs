@@ -1,7 +1,9 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+
 using SkillTest.Application.Auth;
-using SkillTest.Application.Common.Interfaces;
 using SkillTest.Application.Users;
+using SkillTest.Application.Tests;
+using SkillTest.Application.Common.Interfaces;
 
 namespace SkillTest.Application;
 
@@ -11,6 +13,7 @@ public static class DependencyInjection
     {
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped<ITestService, TestService>();
 
         return services;
     }
