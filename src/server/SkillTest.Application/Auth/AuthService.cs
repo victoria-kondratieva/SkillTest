@@ -30,9 +30,9 @@ public sealed class AuthService : IAuthService
         string username,
         string firstName,
         string lastName,
-        CancellationToken cancellationToken = default)
+        CancellationToken ct = default)
     {
-        var identityUserId = await _identityAuthService.CreateIdentityUserAsync(email, password, cancellationToken);
+        var identityUserId = await _identityAuthService.CreateIdentityUserAsync(email, password, ct);
 
         var userId = UserId.From(identityUserId);
 
@@ -46,11 +46,11 @@ public sealed class AuthService : IAuthService
             new UserSettings()
         );
 
-        await _userRepository.AddAsync(domainUser, cancellationToken);
+        _userRepository.Add(domainUser);
 
-        await _identityAuthService.AssignRoleAsync(identityUserId, UserRole.User, cancellationToken);
+        await _identityAuthService.AssignRoleAsync(identityUserId, UserRole.User, ct);
 
-        var roles = await _identityAuthService.GetRolesAsync(identityUserId, cancellationToken);
+        var roles = await _identityAuthService.GetRolesAsync(identityUserId, ct);
 
         var token = _jwtTokenService.GenerateToken(identityUserId, email, roles);
 
@@ -65,14 +65,14 @@ public sealed class AuthService : IAuthService
     public async Task<AuthResult> LoginAsync(
         string email,
         string password,
-        CancellationToken cancellationToken = default)
+        CancellationToken ct = default)
     {
-        var isValid = await _identityAuthService.ValidateCredentialsAsync(email, password, cancellationToken);
+        var isValid = await _identityAuthService.ValidateCredentialsAsync(email, password, ct);
         if (!isValid)
             throw new InvalidCredentialsException();
 
-        var identityUserId = await _identityAuthService.GetUserIdByEmailAsync(email, cancellationToken);
-        var roles = await _identityAuthService.GetRolesAsync(identityUserId, cancellationToken);
+        var identityUserId = await _identityAuthService.GetUserIdByEmailAsync(email, ct);
+        var roles = await _identityAuthService.GetRolesAsync(identityUserId, ct);
 
         var token = _jwtTokenService.GenerateToken(identityUserId, email, roles);
 

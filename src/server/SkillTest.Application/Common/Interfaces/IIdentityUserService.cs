@@ -6,9 +6,10 @@ public interface IIdentityUserService
 {
     Task DeleteIdentityUserAsync(
         Guid id, 
-        CancellationToken cancellationToken = default);
+        CancellationToken ct = default);
+
     Task<bool> AssignRoleAsync(
         Guid id, 
         UserRole role, 
-        CancellationToken cancellationToken = default);
+        CancellationToken ct = default);
 }

@@ -16,17 +16,17 @@ internal sealed class TestRepository : ITestRepository
 
     public async Task<Test?> GetByIdAsync(
         TestId id,
-        CancellationToken cancellationToken = default)
+        CancellationToken ct = default)
     {
         return await _dbContext.Tests
             .Include(t => t.Category)
             .Include(t => t.Questions)
                 .ThenInclude(q => q.Answers)
             .Include(t => t.Tags)
-            .FirstOrDefaultAsync(t => t.Id == id, cancellationToken);
+            .FirstOrDefaultAsync(t => t.Id == id, ct);
     }
 
-    public async Task<IReadOnlyList<Test>> GetAllAsync(CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<Test>> GetAllAsync(CancellationToken ct = default)
     {
         return await _dbContext.Tests
             .Include(t => t.Category)
@@ -34,37 +34,29 @@ internal sealed class TestRepository : ITestRepository
             .Include(t => t.Questions)
                 .ThenInclude(q => q.Answers)
             .OrderBy(t => t.CreatedAt)
-            .ToListAsync(cancellationToken); 
-    }
-
-    public async Task AddAsync(
-        Test test,
-        CancellationToken cancellationToken = default)
-    {
-        await _dbContext.Tests.AddAsync(test, cancellationToken);
-    }
-
-    public Task UpdateAsync(
-        Test test, 
-        CancellationToken cancellationToken = default)
-    {
-        _dbContext.Tests.Update(test);
-        return Task.CompletedTask;
-    }
-
-    public Task RemoveAsync(
-        Test test,
-        CancellationToken cancellationToken = default)
-    {
-        _dbContext.Tests.Remove(test);
-        return Task.CompletedTask;
+            .ToListAsync(ct); 
     }
 
     public Task<bool> ExistsAsync(
-        TestId id,
-        CancellationToken cancellationToken = default)
+    TestId id,
+    CancellationToken ct = default)
     {
         return _dbContext.Tests
-            .AnyAsync(t => t.Id == id, cancellationToken);
+            .AnyAsync(t => t.Id == id, ct);
+    }
+
+    public void Add(Test test)
+    {
+        _dbContext.Tests.Add(test);
+    }
+
+    public void Update(Test test)
+    {
+        _dbContext.Tests.Update(test);
+    }
+
+    public void Delete(Test test)
+    {
+        _dbContext.Tests.Remove(test);
     }
 }

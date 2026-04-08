@@ -9,9 +9,7 @@ internal sealed class TestService : ITestService
     private readonly ITestRepository _testRepository;
     private readonly IUnitOfWork _unitOfWork;
 
-    public TestService(
-        ITestRepository testRepository,
-        IUnitOfWork unitOfWork)
+    public TestService(ITestRepository testRepository, IUnitOfWork unitOfWork)
     {
         _testRepository = testRepository;
         _unitOfWork = unitOfWork;
@@ -19,41 +17,40 @@ internal sealed class TestService : ITestService
 
     public Task<Test?> GetByIdAsync(
         TestId id,
-        CancellationToken cancellationToken = default)
-        => _testRepository.GetByIdAsync(id, cancellationToken);
+        CancellationToken ct = default)
+        => _testRepository.GetByIdAsync(id, ct);
 
     public Task<IReadOnlyList<Test>> GetAllAsync(
-        CancellationToken cancellationToken = default)
-        => _testRepository.GetAllAsync(cancellationToken);
+        CancellationToken ct = default)
+        => _testRepository.GetAllAsync(ct);
 
     public async Task<Test> CreateAsync(
         Test test,
-        CancellationToken cancellationToken = default)
+        CancellationToken ct = default)
     {
-        await _testRepository.AddAsync(test, cancellationToken);
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        _testRepository.Add(test);
+        await _unitOfWork.SaveChangesAsync(ct);
 
         return test;
     }
 
     public async Task UpdateAsync(
         Test test,
-        CancellationToken cancellationToken = default)
+        CancellationToken ct = default)
     {
-        await _testRepository.UpdateAsync(test, cancellationToken);
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        _testRepository.Update(test);
+        await _unitOfWork.SaveChangesAsync(ct);
     }
 
     public async Task DeleteAsync(
         TestId id,
-        CancellationToken cancellationToken = default)
+        CancellationToken ct = default)
     {
-        var test = await _testRepository.GetByIdAsync(id, cancellationToken);
-
+        var test = await _testRepository.GetByIdAsync(id, ct);
         if (test is null)
             return;
 
-        await _testRepository.RemoveAsync(test, cancellationToken);
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        _testRepository.Delete(test);
+        await _unitOfWork.SaveChangesAsync(ct);
     }
 }

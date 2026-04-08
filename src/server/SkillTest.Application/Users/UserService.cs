@@ -23,57 +23,57 @@ public sealed class UserService : IUserService
     }
 
     public Task<IReadOnlyList<User>> GetAllAsync(
-        CancellationToken cancellationToken = default)
-        => _userRepository.GetAllAsync(cancellationToken);
+        CancellationToken ct = default)
+        => _userRepository.GetAllAsync(ct);
 
     public Task<User?> GetByIdAsync(
         UserId id, 
-        CancellationToken cancellationToken = default)
-        => _userRepository.GetByIdAsync(id, cancellationToken);
+        CancellationToken ct = default)
+        => _userRepository.GetByIdAsync(id, ct);
 
     public Task<User?> GetByEmailAsync(
         string email, 
-        CancellationToken cancellationToken = default)
-        => _userRepository.GetByEmailAsync(email, cancellationToken);
+        CancellationToken ct = default)
+        => _userRepository.GetByEmailAsync(email, ct);
 
     public async Task CreateAsync(
         User user, 
-        CancellationToken cancellationToken = default)
+        CancellationToken ct = default)
     {
-        await _userRepository.AddAsync(user, cancellationToken);
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        _userRepository.Add(user);
+        await _unitOfWork.SaveChangesAsync(ct);
     }
 
     public async Task<(bool Success, User? User)> AddPointsAsync(
         UserId id,
         int amount,
         TransactionReason reason,
-        CancellationToken cancellationToken = default)
+        CancellationToken ct = default)
     {
-        var user = await _userRepository.GetByIdAsync(id, cancellationToken);
+        var user = await _userRepository.GetByIdAsync(id, ct);
         if (user is null)
             return (false, null);
 
         user.AddPoints(amount, reason);
 
-        await _userRepository.UpdateAsync(user, cancellationToken);
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        _userRepository.Update(user);
+        await _unitOfWork.SaveChangesAsync(ct);
 
         return (true, user);
     }
 
     public async Task<bool> DeleteUserAsync(
         Guid id, 
-        CancellationToken cancellationToken = default)
+        CancellationToken ct = default)
     {
-        var domainUser = await _userRepository.GetByIdAsync(UserId.From(id), cancellationToken);
+        var domainUser = await _userRepository.GetByIdAsync(UserId.From(id), ct);
         if (domainUser is null)
             return false;
 
-        await _userRepository.DeleteAsync(domainUser, cancellationToken);
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        _userRepository.Delete(domainUser);
+        await _unitOfWork.SaveChangesAsync(ct);
 
-        await _identityService.DeleteIdentityUserAsync(id, cancellationToken);
+        await _identityService.DeleteIdentityUserAsync(id, ct);
 
         return true;
     }
@@ -81,6 +81,6 @@ public sealed class UserService : IUserService
     public Task<bool> AssignRoleAsync(
         Guid id, 
         UserRole role, 
-        CancellationToken cancellationToken = default)
-        => _identityService.AssignRoleAsync(id, role, cancellationToken);
+        CancellationToken ct = default)
+        => _identityService.AssignRoleAsync(id, role, ct);
 }

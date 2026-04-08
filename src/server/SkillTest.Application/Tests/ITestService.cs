@@ -5,9 +5,9 @@ namespace SkillTest.Application.Tests;
 
 public interface ITestService
 {
-    Task<Test?> GetByIdAsync(TestId id, CancellationToken cancellationToken = default);
-    Task<IReadOnlyList<Test>> GetAllAsync(CancellationToken cancellationToken = default);
-    Task<Test> CreateAsync(Test test, CancellationToken cancellationToken = default);
-    Task UpdateAsync(Test test, CancellationToken cancellationToken = default);
-    Task DeleteAsync(TestId id, CancellationToken cancellationToken = default);
+    Task<Test?> GetByIdAsync(TestId id, CancellationToken ct = default);
+    Task<IReadOnlyList<Test>> GetAllAsync(CancellationToken ct = default);
+    Task<Test> CreateAsync(Test test, CancellationToken ct = default);
+    Task UpdateAsync(Test test, CancellationToken ct = default);
+    Task DeleteAsync(TestId id, CancellationToken ct = default);
 }

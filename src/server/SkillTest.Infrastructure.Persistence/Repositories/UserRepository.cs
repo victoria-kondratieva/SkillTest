@@ -17,50 +17,42 @@ internal sealed class UserRepository : IUserRepository
 
     public Task<User?> GetByIdAsync(
         UserId id,
-        CancellationToken cancellationToken = default)
+        CancellationToken ct = default)
     {
         return _dbContext.Users
             .Include(u => u.PointTransactions)
-            .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
+            .FirstOrDefaultAsync(u => u.Id == id, ct);
     }
 
     public Task<User?> GetByEmailAsync(
         string email,
-        CancellationToken cancellationToken = default)
+        CancellationToken ct = default)
     {
         return _dbContext.Users
             .Include(u => u.PointTransactions)
-            .FirstOrDefaultAsync(u => u.Email.Value == email, cancellationToken);
+            .FirstOrDefaultAsync(u => u.Email.Value == email, ct);
     }
 
     public async Task<IReadOnlyList<User>> GetAllAsync(
-        CancellationToken cancellationToken = default)
+        CancellationToken ct = default)
     {
         return await _dbContext.Users
             .Include(u => u.PointTransactions)
-            .ToListAsync(cancellationToken);
+            .ToListAsync(ct);
     }
 
-    public async Task AddAsync(
-        User user,
-        CancellationToken cancellationToken = default)
+    public void Add(User user)
     {
-        await _dbContext.Users.AddAsync(user, cancellationToken);
+        _dbContext.Users.Add(user);
     }
 
-    public Task UpdateAsync(
-        User user,
-        CancellationToken cancellationToken = default)
+    public void Update(User user)
     {
         _dbContext.Users.Update(user);
-        return Task.CompletedTask;
     }
 
-    public Task DeleteAsync(
-        User user,
-        CancellationToken cancellationToken = default)
+    public void Delete(User user)
     {
         _dbContext.Users.Remove(user);
-        return Task.CompletedTask;
     }
 }

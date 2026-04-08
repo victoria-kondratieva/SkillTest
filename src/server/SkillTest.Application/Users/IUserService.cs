@@ -8,32 +8,32 @@ namespace SkillTest.Application.Users;
 public interface IUserService
 {
     Task<IReadOnlyList<User>> GetAllAsync(
-        CancellationToken cancellationToken = default);
+        CancellationToken ct = default);
 
     Task<User?> GetByIdAsync(
         UserId id, 
-        CancellationToken cancellationToken = default);
+        CancellationToken ct = default);
 
     Task<User?> GetByEmailAsync(
         string email, 
-        CancellationToken cancellationToken = default);
+        CancellationToken ct = default);
 
     Task CreateAsync(
         User user, 
-        CancellationToken cancellationToken = default);
+        CancellationToken ct = default);
 
     Task<(bool Success, User? User)> AddPointsAsync(
         UserId id,
         int amount,
         TransactionReason reason,
-        CancellationToken cancellationToken = default);
+        CancellationToken ct = default);
 
     Task<bool> DeleteUserAsync(
         Guid id, 
-        CancellationToken cancellationToken = default);
+        CancellationToken ct = default);
 
     Task<bool> AssignRoleAsync(
         Guid id, 
         UserRole role, 
-        CancellationToken cancellationToken = default);
+        CancellationToken ct = default);
 }

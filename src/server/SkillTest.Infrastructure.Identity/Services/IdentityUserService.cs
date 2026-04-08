@@ -17,11 +17,11 @@ public sealed class IdentityUserService : IIdentityUserService
 
     public async Task DeleteIdentityUserAsync(
         Guid id,
-        CancellationToken cancellationToken = default)
+        CancellationToken ct = default)
     {
         var user = await _userManager.FindByIdAsync(id.ToString());
 
-        cancellationToken.ThrowIfCancellationRequested();
+        ct.ThrowIfCancellationRequested();
 
         if (user != null)
             await _userManager.DeleteAsync(user);
@@ -30,13 +30,13 @@ public sealed class IdentityUserService : IIdentityUserService
     public async Task<bool> AssignRoleAsync(
         Guid id, 
         UserRole role,
-        CancellationToken cancellationToken = default)
+        CancellationToken ct = default)
     {
         var user = await _userManager.FindByIdAsync(id.ToString());
         if (user == null)
             return false;
 
-        cancellationToken.ThrowIfCancellationRequested();
+        ct.ThrowIfCancellationRequested();
 
         var roleName = RoleNames.ToString(role);
 
