@@ -31,6 +31,8 @@ internal sealed class TestRepository : ITestRepository
         return await _dbContext.Tests
             .Include(t => t.Category)
             .Include(t => t.Tags)
+            .Include(t => t.Questions)
+                .ThenInclude(q => q.Answers)
             .OrderBy(t => t.CreatedAt)
             .ToListAsync(cancellationToken); 
     }
