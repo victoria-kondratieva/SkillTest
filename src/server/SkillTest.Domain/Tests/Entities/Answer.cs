@@ -11,25 +11,21 @@ public sealed class Answer : Entity<AnswerId>
 
     private Answer() { }
 
-    public Answer(
-        AnswerId id,
-        string text,
-        bool isCorrect,
-        int orderIndex)
-        : base(id)
+    public Answer(AnswerId id, string text, bool isCorrect) : base(id)
     {
         Text = text;
         IsCorrect = isCorrect;
-        OrderIndex = orderIndex;
+        OrderIndex = 0;
     }
 
-    public void Update(
-        string text,
-        bool isCorrect,
-        int orderIndex)
+    public void Update(string text, bool isCorrect)
     {
         Text = text;
         IsCorrect = isCorrect;
+    }
+
+    public void SetOrderIndex(int orderIndex)
+    {
         OrderIndex = orderIndex;
     }
 }

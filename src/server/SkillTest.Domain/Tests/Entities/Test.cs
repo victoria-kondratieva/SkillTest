@@ -68,19 +68,48 @@ public sealed class Test : Entity<TestId>, IAggregateRoot
         UpdatedAt = DateTime.UtcNow;
     }
 
+    public void RecalculateMaxScore()
+    {
+        MaxScore = _questions.Sum(q => q.Points);
+    }
+
     public void AddQuestion(Question question)
     {
+        question.SetOrderIndex(_questions.Count);
         _questions.Add(question);
+        RecalculateMaxScore();
+    }
+
+    public void RemoveQuestion(QuestionId questionId)
+    {
+        var question = _questions.FirstOrDefault(q => q.Id == questionId);
+        if (question is null)
+            return;
+
+        _questions.Remove(question);
+
+        for (int i = 0; i < _questions.Count; i++)
+            _questions[i].SetOrderIndex(i);
+
+        RecalculateMaxScore();
+    }
+
+    public void ReorderQuestions(IReadOnlyList<QuestionId> newOrder)
+    {
+        var ordered = newOrder
+            .Select(id => _questions.First(q => q.Id == id))
+            .ToList();
+
+        _questions.Clear();
+        _questions.AddRange(ordered);
+
+        for (int i = 0; i < _questions.Count; i++)
+            _questions[i].SetOrderIndex(i);
     }
 
     public void AddTag(Tag tag)
     {
         if (!_tags.Contains(tag))
             _tags.Add(tag);
-    }
-
-    public void RecalculateMaxScore()
-    {
-        MaxScore = _questions.Sum(q => q.Points);
     }
 }
