@@ -26,4 +26,8 @@
 	  <ProjectReference Include="..\SkillTest.Infrastructure.Persistence\SkillTest.Infrastructure.Persistence.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Contracts\TestAttempts\Validators\" />
+	</ItemGroup>
+
 </Project>

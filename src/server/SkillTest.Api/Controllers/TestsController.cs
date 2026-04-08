@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+
 using SkillTest.Api.Contracts.Tests.Requests;
 using SkillTest.Application.Common.Mappers;
 using SkillTest.Application.Tests;
@@ -7,7 +8,6 @@ using SkillTest.Domain.Tests.Entities;
 using SkillTest.Domain.Tests.ValueObjects.Identifiers;
 using SkillTest.Domain.Tests.ValueObjects.Question;
 using SkillTest.Domain.Tests.ValueObjects.Test;
-using SkillTest.Domain.Users.Entities;
 using SkillTest.Domain.Users.ValueObjects.Identifiers;
 
 namespace SkillTest.Api.Controllers;
